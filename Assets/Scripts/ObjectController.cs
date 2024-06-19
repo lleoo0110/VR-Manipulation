@@ -2,12 +2,8 @@ using UnityEngine;
 
 public class ObjectController : MonoBehaviour
 {
-    public GameObject cube; // ƒLƒ…[ƒu‚ÌƒQ[ƒ€ƒIƒuƒWƒFƒNƒg
-    public float restDuration = 3f; // ˆÀÃó‘Ô‚ÌŠÔ
-    public float instructionDuration = 1f; // w¦‚ÌŠÔ
-    public float crossDuration = 1f; // \š‚Ì‡}‚ÌŠÔ
-    public float moveDuration = 4f; // ƒLƒ…[ƒu‚ğ“®‚©‚·ŠÔ
-    public float moveSpeed = 3f; // ƒLƒ…[ƒu‚Ì‘¬‚³
+    public GameObject cube; // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ÌƒQï¿½[ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½g
+    public float moveSpeed; // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½Ì‘ï¿½ï¿½ï¿½
 
     private bool isTaskRunning = false;
     private Vector3 initialPosition;
@@ -19,23 +15,24 @@ public class ObjectController : MonoBehaviour
 
     private void Update()
     {
-        // ƒ^ƒXƒNƒIƒ“ƒIƒt
+        // ï¿½^ï¿½Xï¿½Nï¿½Iï¿½ï¿½ï¿½Iï¿½t
         if (Input.GetKeyDown(KeyCode.Space))
         {
             cube.transform.position = initialPosition;
             isTaskRunning = !isTaskRunning;
+            UnityEngine.Debug.Log(isTaskRunning);
         }
 
-        // ƒIƒuƒWƒFƒNƒg§Œäˆ—
-        if ((Input.GetKeyDown(KeyCode.W)|| UDPReceiver.receivedInt == 2) && isTaskRunning)
+        // ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½äˆï¿½ï¿½
+        if ((Input.GetKey(KeyCode.W)|| UDPReceiver.receivedInt == 2) && isTaskRunning)
         {
             Vector3 direction = new Vector3(0, 0, 1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
             cube.transform.position += movement;
         }
 
-        // ƒIƒuƒWƒFƒNƒg§Œäˆ—
-        else if ((Input.GetKeyDown(KeyCode.S) || UDPReceiver.receivedInt == 3) && isTaskRunning)
+        // ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½äˆï¿½ï¿½
+        else if ((Input.GetKey(KeyCode.S) || UDPReceiver.receivedInt == 3) && isTaskRunning)
         {
             Vector3 direction = new Vector3(0, 0, -1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;

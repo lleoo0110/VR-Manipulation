@@ -6,12 +6,12 @@ using System.Text;
 
 public class TrainingManager : MonoBehaviour
 {
-    public GameObject cube; // ƒLƒ…[ƒu‚ÌƒQ[ƒ€ƒIƒuƒWƒFƒNƒg
-    public float restDuration = 4f; // ˆÀÃó‘Ô‚ÌŠÔ
-    public float instructionDuration = 1f; // w¦‚ÌŠÔ
-    public float crossDuration = 1f; // \š‚Ì‡}‚ÌŠÔ
-    public float moveDuration = 4f; // ƒLƒ…[ƒu‚ğ“®‚©‚·ŠÔ
-    public float moveSpeed = 3f; // ƒLƒ…[ƒu‚Ì‘¬‚³
+    public GameObject cube; // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ÌƒQï¿½[ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½g
+    public float restDuration; // ï¿½ï¿½ï¿½Ãï¿½Ô‚Ìï¿½ï¿½ï¿½
+    public float instructionDuration; // ï¿½wï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
+    public float crossDuration; // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}ï¿½Ìï¿½ï¿½ï¿½
+    public float moveDuration; // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ğ“®‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public float moveSpeed; // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½Ì‘ï¿½ï¿½ï¿½
 
     private bool isTaskRunning = false;
     private Stopwatch stopwatch;
@@ -43,7 +43,6 @@ public class TrainingManager : MonoBehaviour
         {
             yield return StartCoroutine(Neutral());
             yield return StartCoroutine(PushCube());
-            yield return StartCoroutine(Neutral());
             yield return StartCoroutine(PullCube());
         }
     }
@@ -53,32 +52,32 @@ public class TrainingManager : MonoBehaviour
         UnityEngine.Debug.Log("Neutral started.");
 
         stopwatch = Stopwatch.StartNew();
-        Vector3 startPosition = new Vector3(0, 1, 1.5f); // ƒXƒ^[ƒgˆÊ’u‚ğw’è
-        Vector3 direction = new Vector3(0, 0, 0); // ˆÚ“®•ûŒü‚ğw’è
+        Vector3 startPosition = new Vector3(0, 1, 2.5f); // ï¿½Xï¿½^ï¿½[ï¿½gï¿½Ê’uï¿½ï¿½ï¿½wï¿½ï¿½
+        Vector3 direction = new Vector3(0, 0, 0); // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
         cube.transform.position = startPosition;
 
-        // ˆÀÃó‘Ô
+        // ï¿½ï¿½ï¿½Ãï¿½ï¿½
         yield return new WaitForSeconds(restDuration);
 
-        // Ã~‚Ìw¦
+        // ï¿½Ã~ï¿½Ìwï¿½ï¿½
         UnityEngine.Debug.Log("Stay still.");
         yield return new WaitForSeconds(instructionDuration);
 
-        // \š‚Ì‡}
+        // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}
         UnityEngine.Debug.Log("Cross sign.");
         yield return new WaitForSeconds(crossDuration);
 
-        // Ã~
+        // ï¿½Ã~
         UnityEngine.Debug.Log("Staying still.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
 
-        // \š‚Ì‡}
+        // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
-        // Ã~
+        // ï¿½Ã~
         UnityEngine.Debug.Log("Staying still.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
@@ -92,32 +91,32 @@ public class TrainingManager : MonoBehaviour
         UnityEngine.Debug.Log(" startedPushCube.");
 
         stopwatch = Stopwatch.StartNew();
-        Vector3 startPosition = new Vector3(0, 1, -4f); // ƒXƒ^[ƒgˆÊ’u‚ğw’è
-        Vector3 direction = new Vector3(0, 0, 1); // ˆÚ“®•ûŒü‚ğw’è
+        Vector3 startPosition = new Vector3(0, 1, -5f); // ï¿½Xï¿½^ï¿½[ï¿½gï¿½Ê’uï¿½ï¿½ï¿½wï¿½ï¿½
+        Vector3 direction = new Vector3(0, 0, 1); // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
         cube.transform.position = startPosition;
 
-        // ˆÀÃó‘Ô
+        // ï¿½ï¿½ï¿½Ãï¿½ï¿½
         yield return new WaitForSeconds(restDuration);
 
-        // ƒCƒ[ƒWw¦
+        // ï¿½Cï¿½ï¿½ï¿½[ï¿½Wï¿½wï¿½ï¿½
         UnityEngine.Debug.Log("Imagine the cube backwards.");
         yield return new WaitForSeconds(instructionDuration);
 
-        // \š‚Ì‡}
+        // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}
         UnityEngine.Debug.Log("Cross sign.");
         yield return new WaitForSeconds(crossDuration);
 
-        // ƒLƒ…[ƒu‚ğ‰œ‚É“®‚©‚·(‰¹‚ ‚è)
+        // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         UnityEngine.Debug.Log("Moving the cube backwards with Sound.");
         StartCoroutine(MoveCube(startPosition, direction, false));
         yield return new WaitForSeconds(moveDuration);
 
-        // \š‚Ì‡}
+        // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
-        // ƒLƒ…[ƒu‚ğ‰œ‚É“®‚©‚·(‰¹‚È‚µ)
+        // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½È‚ï¿½)
         UnityEngine.Debug.Log("Moving the cube backwards without Sound.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
@@ -131,28 +130,32 @@ public class TrainingManager : MonoBehaviour
         UnityEngine.Debug.Log("PullCube started.");
 
         stopwatch = Stopwatch.StartNew();
-        Vector3 startPosition = new Vector3(0, 1, 7f); // ƒXƒ^[ƒgˆÊ’u‚ğw’è
-        Vector3 direction = new Vector3(0, 0, -1); // ˆÚ“®•ûŒü‚ğw’è
+        Vector3 startPosition = new Vector3(0, 1, 10f); // ï¿½Xï¿½^ï¿½[ï¿½gï¿½Ê’uï¿½ï¿½ï¿½wï¿½ï¿½
+        Vector3 direction = new Vector3(0, 0, -1); // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
         cube.transform.position = startPosition;
 
-        // ˆÀÃó‘Ô
+        // ï¿½ï¿½ï¿½Ãï¿½ï¿½
         yield return new WaitForSeconds(restDuration);
 
-        // ƒCƒ[ƒWw¦
+        // ï¿½Cï¿½ï¿½ï¿½[ï¿½Wï¿½wï¿½ï¿½
         UnityEngine.Debug.Log("Imagine moving the cube forwards.");
         yield return new WaitForSeconds(instructionDuration);
 
-        // ƒLƒ…[ƒu‚ğ‰œ‚É“®‚©‚·(‰¹‚ ‚è)
+        // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}
+        UnityEngine.Debug.Log("Cross sign.");
+        yield return new WaitForSeconds(crossDuration);
+
+        // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         UnityEngine.Debug.Log("Moving the cube backwards with Sound.");
         StartCoroutine(MoveCube(startPosition, direction, false));
         yield return new WaitForSeconds(moveDuration);
 
-        // \š‚Ì‡}
+        // ï¿½\ï¿½ï¿½ï¿½Ìï¿½ï¿½}
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
-        // ƒLƒ…[ƒu‚ğ‰œ‚É“®‚©‚·(‰¹‚È‚µ)
+        // ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½È‚ï¿½)
         UnityEngine.Debug.Log("Moving the cube backwards without Sound.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
@@ -166,7 +169,7 @@ public class TrainingManager : MonoBehaviour
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        // ƒIƒuƒWƒFƒNƒg‚Ì‰¹‚Ìƒ~ƒ…[ƒg‚ğİ’è
+        // ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ì‰ï¿½ï¿½Ìƒ~ï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½İ’ï¿½
         AudioSource audioSource = cube.GetComponent<AudioSource>();
         if (audioSource != null)
         {
