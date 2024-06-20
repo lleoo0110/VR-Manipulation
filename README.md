@@ -1,6 +1,7 @@
 セットアップ編
 1. MATLABセットアップをする
     ・EMOTIV PROの設定により，LSLを有効にする
+
       ・MATLABに脳波データをリアルタイムで送信する
     ・MATLABで，labstreaminglayerフォルダ => matlab => vis_stream.mを実行
       ・チャンネル数を(1 19)，サンプリングレートを(256)に設定しスタートすると，脳波データがリアルタイムで可視化される
