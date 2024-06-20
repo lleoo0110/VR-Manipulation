@@ -4,7 +4,7 @@
 
       ・MATLABに脳波データをリアルタイムで送信する
 
-    ・MATLABで，labstreaminglayerフォルダ => matlab => vis_stream.mを実行
+    ・MATLABで，MATLAB Code => LSL => vis_stream.mを実行
 
       ・チャンネル数を(1 19)，サンプリングレートを(256)に設定しスタートすると，脳波データがリアルタイムで可視化される
 
@@ -18,7 +18,7 @@
 
 Trainingシーン（トレーニングのためのScene）
 1. MATLAB操作
-    ・MATLABのprogramフォルダ => S[atial Audio => Caribrarion.mファイルを実行する
+    ・MATLABのMATLAB Code => Spatial Audio => Caribrarion.mファイルを実行する
 
     ・Startボタンを押して脳はデータの記録を開始する
 
