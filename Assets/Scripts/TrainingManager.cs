@@ -7,11 +7,11 @@ using System.Text;
 public class TrainingManager : MonoBehaviour
 {
     public GameObject cube; // �L���[�u�̃Q�[���I�u�W�F�N�g
-    public float restDuration; // ���Ï�Ԃ̎���
-    public float instructionDuration; // �w���̎���
-    public float crossDuration; // �\���̍��}�̎���
-    public float moveDuration; // �L���[�u�𓮂�������
-    public float moveSpeed; // �L���[�u�̑���
+    public float restDuration; // 安静期間
+    public float instructionDuration; // 指示期間
+    public float crossDuration; // 合図期間
+    public float moveDuration; // イメージ想起期間
+    public float moveSpeed; // オブジェクトの移動速度
 
     private bool isTaskRunning = false;
     private Stopwatch stopwatch;
@@ -41,6 +41,7 @@ public class TrainingManager : MonoBehaviour
 
         while (true)
         {
+            // ここを繰り返す
             yield return StartCoroutine(Neutral());
             yield return StartCoroutine(PushCube());
             yield return StartCoroutine(PullCube());
@@ -56,28 +57,37 @@ public class TrainingManager : MonoBehaviour
         Vector3 direction = new Vector3(0, 0, 0); // �ړ��������w��
         cube.transform.position = startPosition;
 
-        // ���Ï��
+        // 安静期間
+        // ウィンドウ出す（白い画面）
+        // Canvas ON
+        // ここにプログラム
         yield return new WaitForSeconds(restDuration);
 
-        // �Î~�̎w��
+        // 指示期間
+        // ウィンドウにイメージの指示を表示
+        // ここにプログラム
         UnityEngine.Debug.Log("Stay still.");
         yield return new WaitForSeconds(instructionDuration);
 
-        // �\���̍��}
+        // ウィンドウに十字の合図を表示
+        // ここにプログラム
         UnityEngine.Debug.Log("Cross sign.");
         yield return new WaitForSeconds(crossDuration);
 
-        // �Î~
+        // イメージ想起期間
+        // ここにプログラム Canvas OFF
         UnityEngine.Debug.Log("Staying still.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
 
         // �\���̍��}
+        // ここにプログラム
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
-        // �Î~
+        // 
+        // ここにプログラム Canvas OFF
         UnityEngine.Debug.Log("Staying still.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
