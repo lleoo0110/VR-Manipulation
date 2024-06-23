@@ -5,7 +5,7 @@ public class ObjectController : MonoBehaviour
     public GameObject cube; // �L���[�u�̃Q�[���I�u�W�F�N�g
     public float moveSpeed; // �L���[�u�̑���
 
-    private bool isTaskRunning = false;
+    public bool isTaskRunning = false;
     private Vector3 initialPosition;
 
     private void Start()
