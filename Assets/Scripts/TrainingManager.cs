@@ -3,6 +3,8 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Diagnostics;
 using System.Text;
+using JetBrains.Annotations;
+using UnityEngine.UI;
 
 public class TrainingManager : MonoBehaviour
 {
@@ -12,6 +14,11 @@ public class TrainingManager : MonoBehaviour
     public float crossDuration; // 合図期間
     public float moveDuration; // イメージ想起期間
     public float moveSpeed; // オブジェクトの移動速度
+
+    public Canvas canvas;
+    public Text text;
+    public GameObject verticalLine;
+    public GameObject horizontalLine;
 
     private bool isTaskRunning = false;
     private Stopwatch stopwatch;
@@ -55,39 +62,46 @@ public class TrainingManager : MonoBehaviour
         stopwatch = Stopwatch.StartNew();
         Vector3 startPosition = new Vector3(0, 1, 2.5f); // �X�^�[�g�ʒu���w��
         Vector3 direction = new Vector3(0, 0, 0); // �ړ��������w��
-        cube.transform.position = startPosition;
+    cube.transform.position = startPosition;
 
         // 安静期間
         // ウィンドウ出す（白い画面）
         // Canvas ON
-        // ここにプログラム
+        canvas.gameObject.SetActive(true);
+        text.gameObject.SetActive(false);
         yield return new WaitForSeconds(restDuration);
 
         // 指示期間
         // ウィンドウにイメージの指示を表示
-        // ここにプログラム
+        text.gameObject.SetActive(true);
+        text.text = "静止";
         UnityEngine.Debug.Log("Stay still.");
         yield return new WaitForSeconds(instructionDuration);
 
         // ウィンドウに十字の合図を表示
-        // ここにプログラム
+        text.gameObject.SetActive(false);
+        verticalLine.SetActive(true);
+        horizontalLine.SetActive(true);
         UnityEngine.Debug.Log("Cross sign.");
         yield return new WaitForSeconds(crossDuration);
 
         // イメージ想起期間
         // ここにプログラム Canvas OFF
+        canvas.gameObject.SetActive(false);
         UnityEngine.Debug.Log("Staying still.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
 
         // �\���̍��}
-        // ここにプログラム
+        canvas.gameObject.SetActive(true);
+        verticalLine.SetActive(true);
+        horizontalLine.SetActive(true);
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
         // 
-        // ここにプログラム Canvas OFF
+        canvas.gameObject.SetActive(false);
         UnityEngine.Debug.Log("Staying still.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
@@ -106,27 +120,43 @@ public class TrainingManager : MonoBehaviour
         cube.transform.position = startPosition;
 
         // ���Ï��
+        verticalLine.SetActive(false);
+        horizontalLine.SetActive(false);
+        canvas.gameObject.SetActive(true);
+        text.gameObject.SetActive(false);
         yield return new WaitForSeconds(restDuration);
 
         // �C���[�W�w��
+        text.gameObject.SetActive(true);
+        text.text = "手前→奥";
         UnityEngine.Debug.Log("Imagine the cube backwards.");
         yield return new WaitForSeconds(instructionDuration);
 
         // �\���̍��}
+        text.gameObject.SetActive(false);
+        verticalLine.SetActive(true);
+        horizontalLine.SetActive(true);
         UnityEngine.Debug.Log("Cross sign.");
         yield return new WaitForSeconds(crossDuration);
 
         // �L���[�u�����ɓ�����(������)
+        canvas.gameObject.SetActive(false);
         UnityEngine.Debug.Log("Moving the cube backwards with Sound.");
         StartCoroutine(MoveCube(startPosition, direction, false));
         yield return new WaitForSeconds(moveDuration);
 
         // �\���̍��}
+        canvas.gameObject.SetActive(true);
+        verticalLine.SetActive(true);
+        horizontalLine.SetActive(true);
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
         // �L���[�u�����ɓ�����(���Ȃ�)
+        verticalLine.SetActive(false);
+        horizontalLine.SetActive(false);
+        canvas.gameObject.SetActive(false);
         UnityEngine.Debug.Log("Moving the cube backwards without Sound.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
@@ -144,28 +174,42 @@ public class TrainingManager : MonoBehaviour
         Vector3 direction = new Vector3(0, 0, -1); // �ړ��������w��
         cube.transform.position = startPosition;
 
-        // ���Ï��
+        // ���Ï
+        canvas.gameObject.SetActive(true);
+        text.gameObject.SetActive(false);
         yield return new WaitForSeconds(restDuration);
 
         // �C���[�W�w��
+        text.gameObject.SetActive(true);
+        text.text = "奥→手前";
         UnityEngine.Debug.Log("Imagine moving the cube forwards.");
         yield return new WaitForSeconds(instructionDuration);
 
         // �\���̍��}
+        text.gameObject.SetActive(false);
+        verticalLine.SetActive(true);
+        horizontalLine.SetActive(true);
         UnityEngine.Debug.Log("Cross sign.");
         yield return new WaitForSeconds(crossDuration);
 
         // �L���[�u�����ɓ�����(������)
+        canvas.gameObject.SetActive(false);
         UnityEngine.Debug.Log("Moving the cube backwards with Sound.");
         StartCoroutine(MoveCube(startPosition, direction, false));
         yield return new WaitForSeconds(moveDuration);
 
         // �\���̍��}
+        canvas.gameObject.SetActive(true);
+        verticalLine.SetActive(true);
+        horizontalLine.SetActive(true);
         UnityEngine.Debug.Log("Cross sign.");
         cube.transform.position = startPosition;
         yield return new WaitForSeconds(crossDuration);
 
         // �L���[�u�����ɓ�����(���Ȃ�)
+        verticalLine.SetActive(false);
+        horizontalLine.SetActive(false);
+        canvas.gameObject.SetActive(false);
         UnityEngine.Debug.Log("Moving the cube backwards without Sound.");
         StartCoroutine(MoveCube(startPosition, direction, true));
         yield return new WaitForSeconds(moveDuration);
