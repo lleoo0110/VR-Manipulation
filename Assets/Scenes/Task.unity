@@ -293,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 324489012}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2.55, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.6, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1563,16 +1563,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f430e2678900d4caff0e03d9da323b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectPrefab: {fileID: 0}
   window: {fileID: 324489012}
   winFrontPos: -3
   winBackPos: 8
   initialColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5019608}
   activeColor: {r: 0, g: 1, b: 0, a: 0.5019608}
-  objectPositions: []
-  windowPositions: []
-  delayTime: 3
+  taskNum: 20
+  intervalTime: 1
   stayDuration: 0.5
+  user_name: 
 --- !u!1001 &1972445812
 PrefabInstance:
   m_ObjectHideFlags: 0

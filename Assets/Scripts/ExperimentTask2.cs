@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Collections;
 
 public class ExperimentTask2 : MonoBehaviour
 {
@@ -20,9 +21,11 @@ public class ExperimentTask2 : MonoBehaviour
     private Boolean goalOver = false; // ゴールを過ぎているか
 
     private int times = 1; // 今何回目のタスクか
+    public int taskNum; // 全体のタスク数
+    private Boolean taskComplete = false;
 
 
-    public float delayTime = 3f; // 静止時間
+    public float intervalTime = 1f; // タスクの開始時のインターバル
     public float stayDuration = 0.5f; // 静止判定の時間
     
     private Vector3 previousPosition; // 前回のオブジェクト位置
@@ -41,7 +44,6 @@ public class ExperimentTask2 : MonoBehaviour
         initialPosition = this.gameObject.transform.position;
         window.GetComponent<Renderer>().material.color = noColor;
         StartDelayTimer();
-        //SetupExperiment();
     }
 
     private void Update()
@@ -59,7 +61,8 @@ public class ExperimentTask2 : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Return) && task == 1)//タスクないとき
         {
             task = UnityEngine.Random.Range(0, 2) + 2; // 2以上3未満の整数
-            StartTask(task);
+            // コルーチンを開始
+            StartCoroutine(DelayedStartTask(intervalTime,task));
         }
         else if (Input.GetKeyDown(KeyCode.Space) && (task == 2 || task == 3)) // スペースキーを押すとタイマーを再スタート
         {
@@ -67,12 +70,18 @@ public class ExperimentTask2 : MonoBehaviour
             taskStopwatch.Restart();
         }
         else if (Input.GetKeyDown(KeyCode.Escape)) EndTask();
-        if (times > 20) EndTask(); //20タスク終了したらデータを記録
+        if (times > taskNum && !taskComplete)
+        {
+            EndTask(); //20タスク終了したらデータを記録
+            taskComplete = true;
+        }
     }
 
-    //タスクの開始
-    private void StartTask(int task)
+    // 1秒遅延させてタスク開始するコルーチン
+    IEnumerator DelayedStartTask(float delayTime,int task)
     {
+        // タスク開始前の表示
+        UnityEngine.Debug.Log(delayTime + "秒後にタスクを開始します");
         float z = 0;
         //手前から奥のタスクの時
         if (task == 2)
@@ -87,9 +96,13 @@ public class ExperimentTask2 : MonoBehaviour
         }
         window.transform.position = new Vector3(window.transform.position.x, window.transform.position.y, z);
         window.GetComponent<Renderer>().material.color = initialColor; //ウィンドウの色
-        this.gameObject.GetComponent<ObjectController>().isTaskRunning = true ;
-        taskStopwatch.Restart();
-        UnityEngine.Debug.Log("タスク開始");
+
+        // 1秒待機
+        yield return new WaitForSeconds(delayTime);
+
+        this.gameObject.GetComponent<ObjectController>().isTaskRunning = true;
+        taskStopwatch.Restart(); // ストップウォッチスタート
+        UnityEngine.Debug.Log(times+"回目のタスク開始");
     }
 
     //手前から奥の時のウィンドウの更新
