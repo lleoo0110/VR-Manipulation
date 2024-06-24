@@ -9,7 +9,7 @@ public class ExperimentTask : MonoBehaviour
     public Vector3[] windowPositions; // ウィンドウの生成位置の配列
     public float delayTime = 3f; // 静止時間
     public float stayDuration = 0.5f; // 静止判定の時間
-    
+
     private GameObject currentObject; // 現在のオブジェクト
     private GameObject currentWindow; // 現在のウィンドウ
     private bool isTaskStarted = false; // タスク開始フラグ
@@ -146,7 +146,7 @@ public class ExperimentTask : MonoBehaviour
         {
             if (IsStayDurationElapsed())
             {
-                UnityEngine.Debug.Log("Trial Clear!");
+                UnityEngine.Debug.Log("Task Success!");
                 // 次の試行に移行するための処理を追加
             }
         }

@@ -45,7 +45,6 @@ public class TrainingManager : MonoBehaviour
     private IEnumerator RunTraining()
     {
         // isTaskRunning = true;
-
         while (true)
         {
             // ここを繰り返す
@@ -63,7 +62,6 @@ public class TrainingManager : MonoBehaviour
         Vector3 startPosition = new Vector3(0, 1, 2.5f); // �X�^�[�g�ʒu���w��
         Vector3 direction = new Vector3(0, 0, 0); // �ړ��������w��
     cube.transform.position = startPosition;
-
         // 安静期間
         // ウィンドウ出す（白い画面）
         // Canvas ON
