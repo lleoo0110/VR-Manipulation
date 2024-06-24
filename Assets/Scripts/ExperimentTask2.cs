@@ -9,12 +9,17 @@ using System.Collections;
 public class ExperimentTask2 : MonoBehaviour
 {
     private Vector3 initialPosition;//ボールの初期位置
+    public float objFrontPos; // ボールの初期位置(手前のとき)
+    public float objBackPos; // ボールの初期位置(奥のとき)
+
     public GameObject window; // ウィンドウ
     public float winFrontPos; // ウィンドウの手前の座標
     public float winBackPos; // ウィンドウの奥の座標
     public Color initialColor; // 初期状態のウィンドウの色
     public Color activeColor; // アクティブ状態(ボールが通り過ぎた後)の色
     private Color noColor = new Color(0, 0, 0, 0);
+
+
     private int task = 1; //今どの状態かを示す　1: 休憩状態, 2: 手前から奥のタスク, 3: 奥から手前のタスク
 
     private float goal; // この位置を過ぎて静止できればタスククリア
@@ -82,19 +87,23 @@ public class ExperimentTask2 : MonoBehaviour
     {
         // タスク開始前の表示
         UnityEngine.Debug.Log(delayTime + "秒後にタスクを開始します");
-        float z = 0;
+        float winZ = 0;
+        float objZ = 0;
         //手前から奥のタスクの時
         if (task == 2)
         {
-            z = winBackPos;
+            winZ = winBackPos;
+            objZ = objFrontPos;
             goal = winFrontPos;
         }
         else if (task == 3)
         {
-            z = winFrontPos;
+            winZ = winFrontPos;
+            objZ = objBackPos;
             goal = winBackPos;
         }
-        window.transform.position = new Vector3(window.transform.position.x, window.transform.position.y, z);
+        window.transform.position = new Vector3(window.transform.position.x, window.transform.position.y, winZ);
+        this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y, objZ);
         window.GetComponent<Renderer>().material.color = initialColor; //ウィンドウの色
 
         // 1秒待機
