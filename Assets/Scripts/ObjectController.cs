@@ -15,7 +15,7 @@ public class ObjectController : MonoBehaviour
 
     private void Update()
     {
-        // �^�X�N�I���I�t
+        // 位置のリセットと移動可能かを設定
         if (Input.GetKeyDown(KeyCode.Space))
         {
             cube.transform.position = initialPosition;
@@ -23,26 +23,18 @@ public class ObjectController : MonoBehaviour
             UnityEngine.Debug.Log(isTaskRunning);
         }
 
-        // �I�u�W�F�N�g���䏈��
-        if ((Input.GetKey(KeyCode.W)|| UDPReceiver.receivedInt == 2) && isTaskRunning)
+        // 前進
+        if (Input.GetKey(KeyCode.W) && isTaskRunning)
         {
             Vector3 direction = new Vector3(0, 0, 1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
             cube.transform.position += movement;
         }
 
-        // �I�u�W�F�N�g���䏈��
-        else if ((Input.GetKey(KeyCode.S) || UDPReceiver.receivedInt == 3) && isTaskRunning)
+        // 後進
+        else if (Input.GetKey(KeyCode.S)&& isTaskRunning)
         {
             Vector3 direction = new Vector3(0, 0, -1);
-            Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-            cube.transform.position += movement;
-        }
-
-        
-        else
-        {
-            Vector3 direction = new Vector3(0, 0, 0);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
             cube.transform.position += movement;
         }

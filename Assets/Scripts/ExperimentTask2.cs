@@ -5,12 +5,14 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections;
+//using UnityEngine.Windows;
 
 public class ExperimentTask2 : MonoBehaviour
 {
     private Vector3 initialPosition;//ボールの初期位置
     public float objFrontPos; // ボールの初期位置(手前のとき)
     public float objBackPos; // ボールの初期位置(奥のとき)
+    private float moveSpeed; // ボールの移動速度(ObjectControllerから取得)
 
     public GameObject window; // ウィンドウ
     public float winFrontPos; // ウィンドウの手前の座標
@@ -39,13 +41,24 @@ public class ExperimentTask2 : MonoBehaviour
     public Stopwatch taskStopwatch=new Stopwatch(); // 1タスクあたりのタイムスコアを計測するストップウォッチ
     private DateTime TodayNow;//現在時間(CSVファイル名に使う)
     public string user_name;//ファイル名に表示するユーザー名
+    private string filename;
 
-    // CSV書き出し用
-    private List<List<string>> data = new List<List<string>>();
+    // タイムスコアCSV書き出し用
+    private List<List<string>> scoreData= new List<List<string>>();
+    // 脳波による入力書き出し用
+    private List<List<string>> inputData= new List<List<string>>();
+    private List<string> inputRow = new List<string>();
 
     private void Start()
     {
-        data.Add(new List<string> { "Times", "Score(sec)"});
+        //時間を取得(ファイル名に使用)
+        TodayNow = DateTime.Now;
+        filename = TodayNow.Year.ToString() + "_" + TodayNow.Month.ToString() + "_" + TodayNow.Day.ToString() + "_" + DateTime.Now.ToLongTimeString() + ".csv";
+        filename = filename.Replace(":", "_");//":"はファイル名に使えない
+        scoreData.Add(new List<string> { "Times", "Score(sec)"});
+        inputData.Add(new List<string> { "EEG Input" });
+        // ObjectControllerからmoveSpeedを取得
+        moveSpeed = this.gameObject.GetComponent<ObjectController>().moveSpeed;
         initialPosition = this.gameObject.transform.position;
         window.GetComponent<Renderer>().material.color = noColor;
         StartDelayTimer();
@@ -53,9 +66,11 @@ public class ExperimentTask2 : MonoBehaviour
 
     private void Update()
     {
+        if (task == 2 || task == 3) UpdateBall();
         if (task == 2)
         {
             UpdateWindow2();
+            
         }else if (task==3)
         {
             UpdateWindow3();
@@ -63,22 +78,25 @@ public class ExperimentTask2 : MonoBehaviour
         if (goalOver) {
             CheckStill();
         }
-        else if (Input.GetKeyDown(KeyCode.Return) && task == 1)//タスクないとき
+        //タスクないときエンターを押したら次のタスクをスタート
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.Return) && task == 1)
         {
             task = UnityEngine.Random.Range(0, 2) + 2; // 2以上3未満の整数
             // コルーチンを開始
             StartCoroutine(DelayedStartTask(intervalTime,task));
         }
-        else if (Input.GetKeyDown(KeyCode.Space) && (task == 2 || task == 3)) // スペースキーを押すとタイマーを再スタート
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.Space) && (task == 2 || task == 3)) // スペースキーを押すとタイマーを再スタート
         {
             UnityEngine.Debug.Log("位置リセット+タイマーリスタート");
             taskStopwatch.Restart();
         }
-        else if (Input.GetKeyDown(KeyCode.Escape)) EndTask();
+
         if (times > taskNum && !taskComplete)
         {
-            EndTask(); //20タスク終了したらデータを記録
             taskComplete = true;
+        }else if (taskComplete)
+        {
+            UnityEngine.Debug.Log("End");
         }
     }
 
@@ -150,17 +168,59 @@ public class ExperimentTask2 : MonoBehaviour
         }
     }
 
+    //ボール位置の更新
+    private void UpdateBall()
+    {
+        int input = UDPReceiver.receivedInt;
+        if (UnityEngine.Input.GetKey(KeyCode.W))
+        {
+            input = 2;
+            UnityEngine.Debug.Log("2desuu");
+        }else if (UnityEngine.Input.GetKey(KeyCode.S))
+        {
+            input = 3;
+        }
+        UnityEngine.Debug.Log(input+input.ToString());
+        inputRow.Add(input.ToString());//脳波入力をリストに追加
+        // 前進
+        if (input == 2 && task==2)
+        {
+            Vector3 direction = new Vector3(0, 0, 1);
+            Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+            this.gameObject.transform.position += movement;
+        }
+
+        // 後進
+        else if (input == 3 && task == 3)
+        {
+            Vector3 direction = new Vector3(0, 0, -1);
+            Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+            this.gameObject.transform.position += movement;
+        }
+    }
+
     // 静止したかチェック
     private void CheckStill()
     {
-        if(UDPReceiver.receivedInt == 1|Input.GetKeyDown(KeyCode.Return))
+        if(UDPReceiver.receivedInt == 1|UnityEngine.Input.GetKeyDown(KeyCode.Return))
         {
             taskStopwatch.Stop();
             double score=taskStopwatch.Elapsed.TotalSeconds; // かかった時間
             // 今回のタスクのタイムスコアをdataに追加
-            int newId = data.Count;
-            data.Add(new List<string> { times.ToString(), score.ToString() });
-            UnityEngine.Debug.Log("タスククリア(1を検出): "+times+"回目: "+score+"s");
+            scoreData.Add(new List<string> { times.ToString(), score.ToString() });
+            // タイムスコアの書き出し
+            UnityEngine.Debug.Log(filename);
+            // 書き出し先のファイルパス（プロジェクトフォルダのルートに書き出す）
+            string filePath = Path.Combine(Application.dataPath, user_name + "_TaskScore_"+filename);
+            WriteToCSV(filePath, scoreData);
+            // 脳波データの書き出し
+            inputData.Add(inputRow);
+            inputRow = new List<string>();// 脳波入力の行リストの初期化
+            filePath= Path.Combine(Application.dataPath, user_name + "_EEG_Input_" + filename);
+            WriteToCSV(filePath, inputData);
+            UnityEngine.Debug.Log("タスククリア(1を検出): " + times + "回目: " + score + "s");
+
+            //次の準備
             this.gameObject.transform.position = initialPosition;
             this.gameObject.GetComponent<ObjectController>().isTaskRunning = false;
             window.GetComponent<Renderer>().material.color = noColor;//無色にする
@@ -168,21 +228,6 @@ public class ExperimentTask2 : MonoBehaviour
             times++; // 次のタスクへ移行
             task = 1;
         }
-    }
-
-    // 全タスクの終了
-    private void EndTask()
-    {
-        //時間を取得
-        TodayNow = DateTime.Now;
-        string filename = user_name+"_"+TodayNow.Year.ToString() + "_" + TodayNow.Month.ToString() + "_" + TodayNow.Day.ToString() + "_" + DateTime.Now.ToLongTimeString() + ".csv";
-        filename = filename.Replace(":", "_");
-        UnityEngine.Debug.Log(filename);
-        // 書き出し先のファイルパス（プロジェクトフォルダのルートに書き出す）
-        string filePath = Path.Combine(Application.dataPath, filename);
-
-        // CSVに書き出し
-        WriteToCSV(filePath, data);
     }
 
     // データをCSVに書き出すメソッド
