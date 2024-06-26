@@ -1565,6 +1565,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objFrontPos: 0
   objBackPos: 5
+  objLowLim: -7
+  objHighLim: 12
   window: {fileID: 324489012}
   winFrontPos: -2
   winBackPos: 7

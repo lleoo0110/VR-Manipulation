@@ -12,6 +12,8 @@ public class ExperimentTask2 : MonoBehaviour
     private Vector3 initialPosition;//ボールの初期位置
     public float objFrontPos; // ボールの初期位置(手前のとき)
     public float objBackPos; // ボールの初期位置(奥のとき)
+    public float objLowLim;
+    public float objHighLim;
     private float moveSpeed; // ボールの移動速度(ObjectControllerから取得)
 
     public GameObject window; // ウィンドウ
@@ -168,22 +170,59 @@ public class ExperimentTask2 : MonoBehaviour
         }
     }
 
-    //ボール位置の更新
+    //ボール位置の更新(反対方向の入力を無視)
+    //private void UpdateBall()
+    //{
+    //    int input = UDPReceiver.receivedInt;
+    //    if (input == 0)
+    //    {
+    //        UnityEngine.Debug.Log("!!!!!!!UDP未接続(ポート番号を確認してください)!!!!!!!!!");
+    //    }
+    //    if (UnityEngine.Input.GetKey(KeyCode.W))
+    //    {
+    //        input = 2;
+    //    }else if (UnityEngine.Input.GetKey(KeyCode.S))
+    //    {
+    //        input = 3;
+    //    }
+    //    UnityEngine.Debug.Log(input+input.ToString());
+    //    inputRow.Add(input.ToString());//脳波入力をリストに追加
+    //    // 前進
+    //    if (input == 2 && task==2)
+    //    {
+    //        Vector3 direction = new Vector3(0, 0, 1);
+    //        Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+    //        this.gameObject.transform.position += movement;
+    //    }
+
+    //    // 後進
+    //    else if (input == 3 && task == 3)
+    //    {
+    //        Vector3 direction = new Vector3(0, 0, -1);
+    //        Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+    //        this.gameObject.transform.position += movement;
+    //    }
+    //}
+
+    // ボール位置の更新(反対方向の入力受け入れ、壁超えたら失敗判定)
     private void UpdateBall()
     {
         int input = UDPReceiver.receivedInt;
+        if (input == 0)
+        {
+            UnityEngine.Debug.Log("!!!!!!!UDP未接続(ポート番号を確認してください)!!!!!!!!!");
+        }
         if (UnityEngine.Input.GetKey(KeyCode.W))
         {
             input = 2;
-            UnityEngine.Debug.Log("2desuu");
-        }else if (UnityEngine.Input.GetKey(KeyCode.S))
+        }
+        else if (UnityEngine.Input.GetKey(KeyCode.S))
         {
             input = 3;
         }
-        UnityEngine.Debug.Log(input+input.ToString());
-        inputRow.Add(input.ToString());//脳波入力をリストに追加
+        inputRow.Add(input.ToString()); // 脳波入力をリストに追加
         // 前進
-        if (input == 2 && task==2)
+        if (input == 2)
         {
             Vector3 direction = new Vector3(0, 0, 1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
@@ -191,11 +230,17 @@ public class ExperimentTask2 : MonoBehaviour
         }
 
         // 後進
-        else if (input == 3 && task == 3)
+        else if (input == 3)
         {
             Vector3 direction = new Vector3(0, 0, -1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
             this.gameObject.transform.position += movement;
+        }
+
+        float z = this.gameObject.transform.position.z;
+        if (z < objLowLim || z > objHighLim)
+        {
+            TaskFailed();
         }
     }
 
@@ -220,14 +265,41 @@ public class ExperimentTask2 : MonoBehaviour
             WriteToCSV(filePath, inputData);
             UnityEngine.Debug.Log("タスククリア(1を検出): " + times + "回目: " + score + "s");
 
-            //次の準備
-            this.gameObject.transform.position = initialPosition;
-            this.gameObject.GetComponent<ObjectController>().isTaskRunning = false;
-            window.GetComponent<Renderer>().material.color = noColor;//無色にする
-            goalOver = false;
-            times++; // 次のタスクへ移行
-            task = 1;
+            TaskFin();
         }
+    }
+
+    // タスクが失敗したときの処理
+    private void TaskFailed()
+    {
+        double score = taskStopwatch.Elapsed.TotalSeconds; // かかった時間
+        // 今回のタスクのタイムスコアをdataに追加
+        scoreData.Add(new List<string> { times.ToString(),  score.ToString(), "Failed" });
+        // タイムスコアの書き出し
+        UnityEngine.Debug.Log(filename);
+        // 書き出し先のファイルパス（プロジェクトフォルダのルートに書き出す）
+        string filePath = Path.Combine(Application.dataPath, user_name + "_TaskScore_" + filename);
+        WriteToCSV(filePath, scoreData);
+        // 脳波データの書き出し
+        inputData.Add(inputRow);
+        inputRow = new List<string>();// 脳波入力の行リストの初期化
+        filePath = Path.Combine(Application.dataPath, user_name + "_EEG_Input_" + filename);
+        WriteToCSV(filePath, inputData);
+        UnityEngine.Debug.Log("タスク失敗: " + times + "回目: " + score + "s");
+
+        TaskFin();
+    }
+
+    // タスクを終了し、次の準備をする
+    private void TaskFin()
+    {
+        //次の準備
+        this.gameObject.transform.position = initialPosition;
+        this.gameObject.GetComponent<ObjectController>().isTaskRunning = false;
+        window.GetComponent<Renderer>().material.color = noColor;//無色にする
+        goalOver = false;
+        times++; // 次のタスクへ移行
+        task = 1;
     }
 
     // データをCSVに書き出すメソッド
