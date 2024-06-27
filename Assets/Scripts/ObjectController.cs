@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ObjectController : MonoBehaviour
 {
+    public static ObjectController instance {  get; private set; }
     public GameObject cube; // �L���[�u�̃Q�[���I�u�W�F�N�g
     public float moveSpeed; // �L���[�u�̑���
 

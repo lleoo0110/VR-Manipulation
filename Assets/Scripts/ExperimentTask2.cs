@@ -9,10 +9,12 @@ using System.Collections;
 
 public class ExperimentTask2 : MonoBehaviour
 {
+    public static ExperimentTask2 instance {  get; private set; }
+
     private Vector3 initialPosition;//ボールの初期位置
     public float objFrontPos; // ボールの初期位置(手前のとき)
     public float objBackPos; // ボールの初期位置(奥のとき)
-    public float objLowLim;
+    public float objLowLim; // オブジェクトの可動範囲
     public float objHighLim;
     private float moveSpeed; // ボールの移動速度(ObjectControllerから取得)
 
@@ -24,20 +26,20 @@ public class ExperimentTask2 : MonoBehaviour
     private Color noColor = new Color(0, 0, 0, 0);
 
 
-    private int task = 1; //今どの状態かを示す　1: 休憩状態, 2: 手前から奥のタスク, 3: 奥から手前のタスク
+    public int task = 1; //今どの状態かを示す　1: 休憩状態, 2: 手前から奥のタスク, 3: 奥から手前のタスク
 
     private float goal; // この位置を過ぎて静止できればタスククリア
     private Boolean goalOver = false; // ゴールを過ぎているか
 
     private int times = 1; // 今何回目のタスクか
     public int taskNum; // 全体のタスク数
+    public float timeLim; // 制限時間(秒)
     private Boolean taskComplete = false;
 
 
     public float intervalTime = 1f; // タスクの開始時のインターバル
     public float stayDuration = 0.5f; // 静止判定の時間
     
-    private Vector3 previousPosition; // 前回のオブジェクト位置
     private Stopwatch stayStopwatch = new Stopwatch(); // 静止判定用ストップウォッチ
     private Stopwatch delayStopwatch = new Stopwatch(); // 遅延時間用ストップウォッチ
     public Stopwatch taskStopwatch=new Stopwatch(); // 1タスクあたりのタイムスコアを計測するストップウォッチ
@@ -49,7 +51,7 @@ public class ExperimentTask2 : MonoBehaviour
     private List<List<string>> scoreData= new List<List<string>>();
     // 脳波による入力書き出し用
     private List<List<string>> inputData= new List<List<string>>();
-    private List<string> inputRow = new List<string>();
+    public List<string> inputRow = new List<string>();
 
     private void Start()
     {
@@ -57,7 +59,7 @@ public class ExperimentTask2 : MonoBehaviour
         TodayNow = DateTime.Now;
         filename = TodayNow.Year.ToString() + "_" + TodayNow.Month.ToString() + "_" + TodayNow.Day.ToString() + "_" + DateTime.Now.ToLongTimeString() + ".csv";
         filename = filename.Replace(":", "_");//":"はファイル名に使えない
-        scoreData.Add(new List<string> { "Times", "Score(sec)"});
+        scoreData.Add(new List<string> { "Times", "Task", "Score(sec)"});
         inputData.Add(new List<string> { "EEG Input" });
         // ObjectControllerからmoveSpeedを取得
         moveSpeed = this.gameObject.GetComponent<ObjectController>().moveSpeed;
@@ -83,7 +85,7 @@ public class ExperimentTask2 : MonoBehaviour
         //タスクないときエンターを押したら次のタスクをスタート
         else if (UnityEngine.Input.GetKeyDown(KeyCode.Return) && task == 1)
         {
-            task = UnityEngine.Random.Range(0, 2) + 2; // 2以上3未満の整数
+            task = UnityEngine.Random.Range(0, 2) + 2; // 2か3のどちらか
             // コルーチンを開始
             StartCoroutine(DelayedStartTask(intervalTime,task));
         }
@@ -100,6 +102,12 @@ public class ExperimentTask2 : MonoBehaviour
         {
             UnityEngine.Debug.Log("End");
         }
+
+        if (taskStopwatch.Elapsed.TotalSeconds >= timeLim)
+        {
+            TaskFailed();
+        }
+        //UnityEngine.Debug.Log(taskStopwatch.Elapsed.TotalSeconds);
     }
 
     // 1秒遅延させてタスク開始するコルーチン
@@ -131,6 +139,7 @@ public class ExperimentTask2 : MonoBehaviour
 
         this.gameObject.GetComponent<ObjectController>().isTaskRunning = true;
         taskStopwatch.Restart(); // ストップウォッチスタート
+        UDPSender.instance.SendData("Start");
         UnityEngine.Debug.Log(times+"回目のタスク開始");
     }
 
@@ -173,7 +182,7 @@ public class ExperimentTask2 : MonoBehaviour
     //ボール位置の更新(反対方向の入力を無視)
     //private void UpdateBall()
     //{
-    //    int input = UDPReceiver.receivedInt;
+    //    int input = UDPReceiver2.receivedInt;
     //    if (input == 0)
     //    {
     //        UnityEngine.Debug.Log("!!!!!!!UDP未接続(ポート番号を確認してください)!!!!!!!!!");
@@ -205,76 +214,117 @@ public class ExperimentTask2 : MonoBehaviour
     //}
 
     // ボール位置の更新(反対方向の入力受け入れ、壁超えたら失敗判定)
+    //private void UpdateBall()
+    //{
+    //    int input = UDPReceiver2.receivedInt;
+    //    if (input == 0)
+    //    {
+    //        UnityEngine.Debug.Log("!!!!!!!UDP未接続(ポート番号を確認してください)!!!!!!!!!");
+    //    }
+    //    if (UnityEngine.Input.GetKey(KeyCode.W))
+    //    {
+    //        input = 2;
+    //    }
+    //    else if (UnityEngine.Input.GetKey(KeyCode.S))
+    //    {
+    //        input = 3;
+    //    }
+    //    inputRow.Add(input.ToString()); // 脳波入力をリストに追加
+    //    // 前進
+    //    if (input == 2)
+    //    {
+    //        Vector3 direction = new Vector3(0, 0, 1);
+    //        Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+    //        this.gameObject.transform.position += movement;
+    //    }
+
+    //    // 後進
+    //    else if (input == 3)
+    //    {
+    //        Vector3 direction = new Vector3(0, 0, -1);
+    //        Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+    //        this.gameObject.transform.position += movement;
+    //    }
+
+    //    float z = this.gameObject.transform.position.z;
+    //    if (z < objLowLim || z > objHighLim)
+    //    {
+    //        TaskFailed();
+    //    }
+    //}
+
+    // ボール位置の更新(壁で止まる)
     private void UpdateBall()
     {
-        int input = UDPReceiver.receivedInt;
-        if (input == 0)
-        {
-            UnityEngine.Debug.Log("!!!!!!!UDP未接続(ポート番号を確認してください)!!!!!!!!!");
-        }
-        if (UnityEngine.Input.GetKey(KeyCode.W))
-        {
-            input = 2;
-        }
-        else if (UnityEngine.Input.GetKey(KeyCode.S))
-        {
-            input = 3;
-        }
-        inputRow.Add(input.ToString()); // 脳波入力をリストに追加
-        // 前進
-        if (input == 2)
-        {
-            Vector3 direction = new Vector3(0, 0, 1);
-            Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-            this.gameObject.transform.position += movement;
-        }
-
-        // 後進
-        else if (input == 3)
-        {
-            Vector3 direction = new Vector3(0, 0, -1);
-            Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-            this.gameObject.transform.position += movement;
-        }
-
+        int input = UDPReceiver2.receivedInt;
         float z = this.gameObject.transform.position.z;
-        if (z < objLowLim || z > objHighLim)
+        //if (input == 0)
+        //{
+        //    UnityEngine.Debug.Log("!!!!!!!UDP未接続(ポート番号を確認してください)!!!!!!!!!");
+        //}
+        //inputRow.Add(input.ToString()); // 脳波入力をリストに追加
+        if (objLowLim <= z && z <= objHighLim)
         {
-            TaskFailed();
+            // 前進
+            if (input == 2)
+            {
+                Vector3 direction = new Vector3(0, 0, 1);
+                Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+                this.gameObject.transform.position += movement;
+            }
+
+            // 後進
+            else if (input == 3)
+            {
+                Vector3 direction = new Vector3(0, 0, -1);
+                Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
+                this.gameObject.transform.position += movement;
+            }
+
+            if (UnityEngine.Input.GetKey(KeyCode.W))
+            {
+                input = 2;
+            }
+            else if (UnityEngine.Input.GetKey(KeyCode.S))
+            {
+                input = 3;
+            }
         }
     }
 
     // 静止したかチェック
     private void CheckStill()
     {
-        if(UDPReceiver.receivedInt == 1|UnityEngine.Input.GetKeyDown(KeyCode.Return))
+        if(UDPReceiver2.receivedInt == 1|UnityEngine.Input.GetKeyDown(KeyCode.Return))
         {
-            taskStopwatch.Stop();
-            double score=taskStopwatch.Elapsed.TotalSeconds; // かかった時間
-            // 今回のタスクのタイムスコアをdataに追加
-            scoreData.Add(new List<string> { times.ToString(), score.ToString() });
-            // タイムスコアの書き出し
-            UnityEngine.Debug.Log(filename);
-            // 書き出し先のファイルパス（プロジェクトフォルダのルートに書き出す）
-            string filePath = Path.Combine(Application.dataPath, user_name + "_TaskScore_"+filename);
-            WriteToCSV(filePath, scoreData);
-            // 脳波データの書き出し
-            inputData.Add(inputRow);
-            inputRow = new List<string>();// 脳波入力の行リストの初期化
-            filePath= Path.Combine(Application.dataPath, user_name + "_EEG_Input_" + filename);
-            WriteToCSV(filePath, inputData);
-            UnityEngine.Debug.Log("タスククリア(1を検出): " + times + "回目: " + score + "s");
-
-            TaskFin();
+            TaskFin(true);
         }
     }
 
     // タスクが失敗したときの処理
     private void TaskFailed()
     {
+        TaskFin(false);
+    }
+
+    // タスクを終了し、次の準備をする
+    private void TaskFin(Boolean succeed)
+    {
+        taskStopwatch.Stop();
         double score = taskStopwatch.Elapsed.TotalSeconds; // かかった時間
+        taskStopwatch.Reset();
+        UDPSender.instance.SendData("End");
+
         // 今回のタスクのタイムスコアをdataに追加
-        scoreData.Add(new List<string> { times.ToString(),  score.ToString(), "Failed" });
+        if (succeed)
+        {
+            scoreData.Add(new List<string> { times.ToString(), task.ToString() , score.ToString() });
+        }
+        else
+        {
+            scoreData.Add(new List<string> { times.ToString(), task.ToString() , score.ToString(), "Failed" });
+        }
+        
         // タイムスコアの書き出し
         UnityEngine.Debug.Log(filename);
         // 書き出し先のファイルパス（プロジェクトフォルダのルートに書き出す）
@@ -287,12 +337,6 @@ public class ExperimentTask2 : MonoBehaviour
         WriteToCSV(filePath, inputData);
         UnityEngine.Debug.Log("タスク失敗: " + times + "回目: " + score + "s");
 
-        TaskFin();
-    }
-
-    // タスクを終了し、次の準備をする
-    private void TaskFin()
-    {
         //次の準備
         this.gameObject.transform.position = initialPosition;
         this.gameObject.GetComponent<ObjectController>().isTaskRunning = false;

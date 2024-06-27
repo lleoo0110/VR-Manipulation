@@ -30,6 +30,7 @@ public class TrainingManager : MonoBehaviour
     private void Start()
     {
         udpClient = new UdpClient();
+        UnityEngine.Debug.Log(port+"番ポートを使用中\n！！！！！MatLabで開始ラベルを確認してください！！！！！");
     }
 
     private void Update()

@@ -5,11 +5,21 @@ using System.Net.Sockets;
 using System.Text;
 
 public class UDPSender : MonoBehaviour {
+    public static UDPSender instance; // 別オブジェクトから参照する用
     private UdpClient udpClient;
     private string ipAddress = "127.0.0.1";
-    private int port = 12354;
+    private int port = 33333;
 
     void Start() {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
         udpClient = new UdpClient();
     }
 

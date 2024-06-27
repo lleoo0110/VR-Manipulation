@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class UDPReceiver : MonoBehaviour
+public class UDPReceiver2 : MonoBehaviour
 {
     UdpClient udpClient;
     public static int receivedInt;
@@ -30,6 +30,11 @@ public class UDPReceiver : MonoBehaviour
         {
             receivedInt = BitConverter.ToInt32(receivedBytes, 0);
             Debug.Log("Received int: " + receivedInt);
+            if (ObjectController.instance.isTaskRunning&&(ExperimentTask2.instance.task == 2 || ExperimentTask2.instance.task == 3))
+            {
+                UnityEngine.Debug.Log("kirokutyuuuuu");
+                ExperimentTask2.instance.inputRow.Add(receivedInt.ToString());
+            }
         }
         
 
