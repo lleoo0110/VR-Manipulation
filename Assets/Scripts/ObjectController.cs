@@ -3,7 +3,6 @@ using UnityEngine;
 public class ObjectController : MonoBehaviour
 {
     public static ObjectController instance {  get; private set; }
-    public GameObject cube; // �L���[�u�̃Q�[���I�u�W�F�N�g
     public float moveSpeed; // �L���[�u�̑���
 
     public bool isTaskRunning = false;
@@ -11,7 +10,16 @@ public class ObjectController : MonoBehaviour
 
     private void Start()
     {
-        initialPosition = cube.transform.position;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+        initialPosition = this.gameObject.transform.position;
     }
 
     private void Update()
@@ -19,7 +27,7 @@ public class ObjectController : MonoBehaviour
         // 位置のリセットと移動可能かを設定
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            cube.transform.position = initialPosition;
+            this.gameObject.transform.position = initialPosition;
             isTaskRunning = !isTaskRunning;
             UnityEngine.Debug.Log(isTaskRunning);
         }
@@ -29,7 +37,7 @@ public class ObjectController : MonoBehaviour
         {
             Vector3 direction = new Vector3(0, 0, 1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-            cube.transform.position += movement;
+            this.gameObject.transform.position += movement;
         }
 
         // 後進
@@ -37,7 +45,7 @@ public class ObjectController : MonoBehaviour
         {
             Vector3 direction = new Vector3(0, 0, -1);
             Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-            cube.transform.position += movement;
+            this.gameObject.transform.position += movement;
         }
     }
 }

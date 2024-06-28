@@ -297,7 +297,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &513446296
 GameObject:
@@ -361,7 +361,7 @@ Transform:
   m_Children:
   - {fileID: 82512918}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &802242654
 GameObject:
@@ -979,7 +979,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1034290999
 GameObject:
@@ -1023,7 +1023,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1275777557
 GameObject:
@@ -1101,7 +1101,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1695355501
 GameObject:
@@ -1382,7 +1382,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 33, y: -369.8, z: 0}
 --- !u!1 &1964265714
 GameObject:
@@ -1418,7 +1418,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ec12956f7a307d4dbbca131e39f13ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 1964265714}
   moveSpeed: 3
   isTaskRunning: 0
 --- !u!82 &1964265717
@@ -1593,7 +1592,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1964265722
 MonoBehaviour:
@@ -1622,7 +1621,6 @@ MonoBehaviour:
   intervalTime: 1
   stayDuration: 0.5
   user_name: 
-  inputRow: []
 --- !u!1001 &1972445812
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1632,7 +1630,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: d8c357a8f90e4443cb30d34f033d0992, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d8c357a8f90e4443cb30d34f033d0992, type: 3}
       propertyPath: m_LocalScale.x

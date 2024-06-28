@@ -1876,7 +1876,7 @@ GameObject:
   - component: {fileID: 1877840897}
   - component: {fileID: 1877840896}
   - component: {fileID: 1877840895}
-  - component: {fileID: 1877840894}
+  - component: {fileID: 1877840901}
   - component: {fileID: 1877840900}
   m_Layer: 0
   m_Name: Object
@@ -1885,21 +1885,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1877840894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1877840892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ec12956f7a307d4dbbca131e39f13ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cube: {fileID: 1877840892}
-  moveSpeed: 3
-  isTaskRunning: 0
 --- !u!82 &1877840895
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2086,8 +2071,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eca20dbb5848294fac0bd94c97ce4c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 0}
-  moveSpeed: 0
+  isTaskRunning: 0
+  moveSpeed: 3
+  objLowLim: -5
+  objHighLim: 10
+--- !u!114 &1877840901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877840892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec12956f7a307d4dbbca131e39f13ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
   isTaskRunning: 0
 --- !u!1 &2067700811
 GameObject:

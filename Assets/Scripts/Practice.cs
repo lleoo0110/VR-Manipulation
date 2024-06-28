@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Practice : MonoBehaviour
 {
-    public GameObject ball;
     public bool isTaskRunning = false;
     
     public float moveSpeed; // 速度
@@ -14,26 +13,26 @@ public class Practice : MonoBehaviour
 
     private void Start()
     {
-        initialPosition = ball.transform.position;
+        initialPosition = this.gameObject.transform.position;
     }
 
     private void Update()
     {
-        if (objLowLim <= ball.transform.position.z && ball.transform.position.z <= objHighLim) {
+        if (objLowLim <= this.gameObject.transform.position.z && this.gameObject.transform.position.z <= objHighLim) {
             int input = UDPReceiver.receivedInt;
             // 位置のリセットと移動可能かを設定
-            //if (Input.GetKeyDown(KeyCode.Space))
-            //{
-            //    ball.transform.position = initialPosition;
-            //    isTaskRunning = !isTaskRunning;
-            //    UnityEngine.Debug.Log(isTaskRunning);
-            //}
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                this.gameObject.transform.position = initialPosition;
+                isTaskRunning = !isTaskRunning;
+                UnityEngine.Debug.Log(isTaskRunning);
+            }
             // 前進
             if (input==2 && isTaskRunning)
             {
                 Vector3 direction = new Vector3(0, 0, 1);
                 Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-                ball.transform.position += movement;
+                this.gameObject.transform.position += movement;
             }
 
             // 後進
@@ -41,7 +40,7 @@ public class Practice : MonoBehaviour
             {
                 Vector3 direction = new Vector3(0, 0, -1);
                 Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
-                ball.transform.position += movement;
+                this.gameObject.transform.position += movement;
             }
         }
         
