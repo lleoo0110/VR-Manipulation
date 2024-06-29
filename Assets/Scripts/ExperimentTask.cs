@@ -139,8 +139,8 @@ public class ExperimentTask : MonoBehaviour
 
         // ストップウォッチの開始、脳波入力の保存開始
         this.gameObject.GetComponent<ObjectController>().isTaskRunning = true;
-        taskStopwatch.Restart(); // ストップウォッチスタート
         UDPReceiver.instance.taskChange(true); // UDPデータ保存を開始
+        taskStopwatch.Restart(); // ストップウォッチスタート
         //UDPSender.instance.SendData("Start");
         UnityEngine.Debug.Log(times+"回目のタスク開始");
     }
@@ -273,6 +273,10 @@ public class ExperimentTask : MonoBehaviour
                 Vector3 direction = new Vector3(0, 0, 1);
                 Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
                 this.gameObject.transform.position += movement;
+                if (this.gameObject.transform.position.z > objHighLim)
+                {
+                    this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y, objHighLim);
+                }
             }
 
             // 後進
@@ -281,6 +285,10 @@ public class ExperimentTask : MonoBehaviour
                 Vector3 direction = new Vector3(0, 0, -1);
                 Vector3 movement = direction.normalized * moveSpeed * Time.deltaTime;
                 this.gameObject.transform.position += movement;
+                if (this.gameObject.transform.position.z < objLowLim)
+                {
+                    this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y, objLowLim);
+                }
             }
 
             if (UnityEngine.Input.GetKey(KeyCode.W))

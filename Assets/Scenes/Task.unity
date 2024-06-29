@@ -1419,6 +1419,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
+  objLowLim: -5
+  objHighLim: 10
   isTaskRunning: 0
 --- !u!82 &1964265717
 AudioSource:
@@ -1608,8 +1610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objFrontPos: 0
   objBackPos: 5
-  objLowLim: -7
-  objHighLim: 12
+  objLowLim: -5
+  objHighLim: 10
   window: {fileID: 324489012}
   winFrontPos: -2
   winBackPos: 7
